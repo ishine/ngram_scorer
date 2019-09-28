@@ -13,7 +13,7 @@
  */
 class Scorer {
 public:
-    virtual float log_cond_prob(const std::vector<std::string> &ngram) = 0;
+    virtual float log10_cond_prob(const std::vector<std::string> &ngram) = 0;
 };
 
 #endif //NGRAM_SCORER_HH
