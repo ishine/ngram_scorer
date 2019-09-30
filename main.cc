@@ -4,7 +4,7 @@
 
 int main() {
     KenlmScorer kenlmScorer{"kenlm/lm/test.arpa"};
-    std::vector<std::string> words = {"a little"};
+    std::vector<std::string> words = {"a", "little"};
     float p = kenlmScorer.log10_cond_prob(words);
     for (const auto& word : words) std::cout << word << " ";
     std::cout << " : " << p << std::endl;
