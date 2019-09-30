@@ -13,6 +13,7 @@
  */
 class Scorer {
 public:
+    virtual ~Scorer(); // in case child class needs to implement it
     virtual float log10_cond_prob(const std::vector<std::string> &ngram) = 0;
 };
 
