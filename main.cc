@@ -4,13 +4,14 @@
 
 int main() {
     KenlmScorer kenlmScorer{"kenlm/lm/test.arpa"};
-    std::vector<std::string> words = {"a", "little"};
+    std::vector<std::string> words = {"a", "little", "more", "looking", "higher", "."};
     float p = kenlmScorer.log10_cond_prob(words);
     for (const auto& word : words) std::cout << word << " ";
     std::cout << " : " << p << std::endl;
 
     FstScorer fstScorer{"test.fst"};
     p = fstScorer.log10_cond_prob(words);
+    for (const auto& word : words) std::cout << word << " ";
     std::cout << " : " << p << std::endl;
 
     return 0;
