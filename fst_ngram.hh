@@ -15,26 +15,24 @@
 #include <memory>
 #include <stdexcept>
 
-namespace fst {
-    class NGramOutputWrapper : public ngram::NGramOutput {
-    public:
-        explicit NGramOutputWrapper(fst::StdMutableFst *infst)
-                : ngram::NGramOutput{infst} {}
+class NGramOutputWrapper : public ngram::NGramOutput {
+public:
+    explicit NGramOutputWrapper(fst::StdMutableFst *infst)
+            : ngram::NGramOutput{infst} {}
 
-        float log_cond_prob(const std::vector<std::string> &words) {
-            StateId mst;
-            int order;
-            double cost = 0;
-            for (const auto &word : words) {
-                auto label = GetFst().InputSymbols()->Find(word);
-                if (!FindNGramInModel(&mst, &order, label, &cost)) {
-                    throw std::runtime_error("ngram not found");
-                }
+    float log_cond_prob(const std::vector<std::string> &words) {
+        StateId mst;
+        int order;
+        double cost = 0;
+        for (const auto &word : words) {
+            auto label = GetFst().InputSymbols()->Find(word);
+            if (!FindNGramInModel(&mst, &order, label, &cost)) {
+                throw std::runtime_error("ngram not found");
             }
-            return -cost;
         }
-    };
-}
+        return -cost;
+    }
+};
 
 class FstScorer : public Scorer {
 public:
@@ -42,8 +40,8 @@ public:
         infst = std::unique_ptr<fst::StdMutableFst>(
                 fst::StdMutableFst::Read(fst_path, true));
         if (!infst) throw std::runtime_error("Error loading the model");
-        model = std::unique_ptr<fst::NGramOutputWrapper>(
-                new fst::NGramOutputWrapper{
+        model = std::unique_ptr<NGramOutputWrapper>(
+                new NGramOutputWrapper{
                     infst.get()});
         if (!model) throw std::runtime_error("Error loading ngram model");
     }
@@ -54,7 +52,7 @@ public:
 
 private:
     std::unique_ptr<fst::StdMutableFst> infst;
-    std::unique_ptr<fst::NGramOutputWrapper> model;
+    std::unique_ptr<NGramOutputWrapper> model;
     static constexpr float LOGE_10 = 2.302585092994046;
 };
 #endif //NGRAM_FST_NGRAM_HH
