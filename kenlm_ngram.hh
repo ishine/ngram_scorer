@@ -1,7 +1,3 @@
-//
-// Created by Young Mo Kang on 9/27/19.
-//
-
 #ifndef NGRAM_KENLM_NGRAM_HH
 #define NGRAM_KENLM_NGRAM_HH
 
