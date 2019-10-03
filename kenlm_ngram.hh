@@ -11,7 +11,7 @@ public:
         model = std::unique_ptr<lm::base::Model>(LoadVirtual(model_path.c_str(), config));
     }
 
-    float log10_cond_prob(const std::vector<std::string> &words) {
+    virtual float log10_cond_prob(const std::vector<std::string> &words) const {
         float cond_prob = 0;
         lm::ngram::State state, out_state;
         // avoid to inserting <s> in begin

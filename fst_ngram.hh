@@ -16,8 +16,8 @@ public:
     explicit NGramOutputWrapper(fst::StdMutableFst *infst)
             : ngram::NGramOutput{infst} {}
 
-    float log_cond_prob(const std::vector<std::string> &words) {
-        StateId mst;
+    float log_cond_prob(const std::vector<std::string> &words) const {
+        StateId mst = 0; // unigram start
         int order;
         double cost = 0;
         for (const auto &word : words) {
@@ -42,13 +42,15 @@ public:
         if (!model) throw std::runtime_error("Error loading ngram model");
     }
 
-    float log10_cond_prob(const std::vector<std::string> &words) {
+    virtual float log10_cond_prob(const std::vector<std::string> &words) const {
         return model->log_cond_prob(words) / LOGE_10;
     }
 
+    // temporarily public
+    std::unique_ptr<NGramOutputWrapper> model;
+
 private:
     std::unique_ptr<fst::StdMutableFst> infst;
-    std::unique_ptr<NGramOutputWrapper> model;
     static constexpr float LOGE_10 = 2.302585092994046;
 };
 #endif //NGRAM_FST_NGRAM_HH

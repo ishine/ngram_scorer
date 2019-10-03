@@ -18,3 +18,6 @@ message(STATUS ${NGRAM})
 
 add_executable(ngram main.cc)
 target_link_libraries(ngram kenlm ${FST} ${FSTFAR} ${NGRAM})
+
+add_executable(speed_test speed_test.cc)
+target_link_libraries(speed_test kenlm ${FST} ${FSTFAR} ${NGRAM})
