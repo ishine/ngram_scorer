@@ -16,17 +16,25 @@ public:
     explicit NGramOutputWrapper(fst::StdMutableFst *infst)
             : ngram::NGramOutput{infst} {}
 
-    float log_cond_prob(const std::vector<std::string> &words) const {
+    float log_cond_prob(const std::vector<int64> &labels) const {
         StateId mst = 0; // unigram start
         int order;
         double cost = 0;
-        for (const auto &word : words) {
-            auto label = GetFst().InputSymbols()->Find(word);
+        for (const auto &label : labels) {
             if (!FindNGramInModel(&mst, &order, label, &cost)) {
                 throw std::runtime_error("ngram not found");
             }
         }
         return -cost;
+    }
+
+    float log_cond_prob(const std::vector<std::string> &words) const {
+        std::vector<int64> labels;
+        for (const auto &word : words) {
+            auto label = GetFst().InputSymbols()->Find(word);
+            labels.push_back(label);
+        }
+        return log_cond_prob(labels);
     }
 };
 
@@ -43,6 +51,10 @@ public:
     }
 
     virtual float log10_cond_prob(const std::vector<std::string> &words) const {
+        return model->log_cond_prob(words) / LOGE_10;
+    }
+
+    virtual float log10_cond_prob(const std::vector<int64> &words) const {
         return model->log_cond_prob(words) / LOGE_10;
     }
 

@@ -22,17 +22,29 @@ public:
             const int n = dis(gen) % max_order + 1;
 //            const int n = 3;
             std::vector<std::string> ngram;
+            std::vector<int64> label_ngram;
             for (int j = 0; j < n; ++j) {
                 const auto key = dis(gen);
                 ngram.emplace_back(isym->Find(key));
+                label_ngram.push_back(key);
             }
             ngrams.emplace_back(ngram);
+            label_ngrams.emplace_back(label_ngram);
         }
     }
 
-    std::vector<float> test(const Scorer &scorer) {
+    std::vector<float> test(const Scorer &scorer) const {
         std::vector<float> result;
         for (const auto& ngram : ngrams) {
+            result.push_back(scorer.log10_cond_prob(ngram));
+        }
+
+        return result;
+    }
+
+    std::vector<float> test_label(const Scorer &scorer) const {
+        std::vector<float> result;
+        for (const auto& ngram : label_ngrams) {
             result.push_back(scorer.log10_cond_prob(ngram));
         }
 
@@ -42,6 +54,7 @@ public:
 private:
     const int max_order, num_test;
     std::vector<std::vector<std::string>> ngrams;
+    std::vector<std::vector<int64>> label_ngrams;
 };
 
 int main(int argc, const char** argv) {
@@ -61,7 +74,7 @@ int main(int argc, const char** argv) {
     std::cout << "KenLM time: " << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 
     begin = clock();
-    const auto test2 = tester.test(fstScorer);
+    const auto test2 = tester.test_label(fstScorer);
     end = clock();
     std::cout << "FST time: " << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 

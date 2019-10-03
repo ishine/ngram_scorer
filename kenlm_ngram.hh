@@ -29,6 +29,10 @@ public:
         return cond_prob;
     }
 
+    virtual float log10_cond_prob(const std::vector<int64_t> &words) const {
+        throw std::runtime_error("not implemented");
+    }
+
 private:
     std::unique_ptr<lm::base::Model> model;
     lm::ngram::Config config;

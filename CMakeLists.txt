@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.10)
 project(ngram)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-O3")
 set(CMAKE_PREFIX_PATH /usr/local/lib)
 
 add_subdirectory(kenlm)
