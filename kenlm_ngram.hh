@@ -29,8 +29,20 @@ public:
         return cond_prob;
     }
 
-    virtual float log10_cond_prob(const std::vector<int64_t> &words) const {
-        throw std::runtime_error("not implemented");
+    virtual float log10_prob(const std::vector<std::string> &words) const {
+        float prob = 0;
+        lm::ngram::State state, out_state;
+        // insert <s> in begin
+        model->BeginSentenceWrite(&state);
+        for (const auto &word : words) {
+            lm::WordIndex word_index = model->BaseVocabulary().Index(word);
+            prob += model->BaseScore(&state, word_index, &out_state);
+            std::swap(state, out_state);
+        }
+        // insert </s> at the end
+        prob += model->BaseScore(&state, model->BaseVocabulary().EndSentence(), &out_state);
+
+        return prob;
     }
 
 private:

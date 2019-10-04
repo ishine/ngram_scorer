@@ -36,6 +36,28 @@ public:
         }
         return log_cond_prob(labels);
     }
+
+    float log_prob(const std::vector<int64> &labels) const {
+        StateId mst = 0; // unigram start
+        int order;
+        double cost = 0, sum = 0;
+        for (const auto &label : labels) {
+            if (!FindNGramInModel(&mst, &order, label, &cost)) {
+                throw std::runtime_error("ngram not found");
+            }
+            sum += cost;
+        }
+        return -sum;
+    }
+
+    float log_prob(const std::vector<std::string> &words) const {
+        std::vector<int64> labels;
+        for (const auto &word : words) {
+            auto label = GetFst().InputSymbols()->Find(word);
+            labels.push_back(label);
+        }
+        return log_prob(labels);
+    }
 };
 
 class FstScorer : public Scorer {
@@ -54,8 +76,8 @@ public:
         return model->log_cond_prob(words) / LOGE_10;
     }
 
-    virtual float log10_cond_prob(const std::vector<int64> &words) const {
-        return model->log_cond_prob(words) / LOGE_10;
+    virtual float log10_prob(const std::vector<std::string> &words) const {
+
     }
 
     // temporarily public

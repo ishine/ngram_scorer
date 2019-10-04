@@ -42,15 +42,6 @@ public:
         return result;
     }
 
-    std::vector<float> test_label(const Scorer &scorer) const {
-        std::vector<float> result;
-        for (const auto& ngram : label_ngrams) {
-            result.push_back(scorer.log10_cond_prob(ngram));
-        }
-
-        return result;
-    }
-
 private:
     const int max_order, num_test;
     std::vector<std::vector<std::string>> ngrams;
@@ -74,7 +65,7 @@ int main(int argc, const char** argv) {
     std::cout << "KenLM time: " << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 
     begin = clock();
-    const auto test2 = tester.test_label(fstScorer);
+    const auto test2 = tester.test(fstScorer);
     end = clock();
     std::cout << "FST time: " << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 
